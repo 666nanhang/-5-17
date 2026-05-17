@@ -73,16 +73,7 @@
         .hero-avatar:hover { transform: scale(1.05) rotate(5deg); }
         .hero-slogan { font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 800; color: #94a3b8; margin-bottom: 2.5rem; letter-spacing: -0.01em; }
         
-        /* 🌟 新增：高级骨架屏加载动画 (Skeleton Loading) */
-        .img-skeleton {
-            background: linear-gradient(90deg, rgba(255,255,255,0.02) 25%, rgba(0, 240, 255, 0.08) 50%, rgba(255,255,255,0.02) 75%);
-            background-size: 200% 100%;
-            animation: skeleton-loading 2s infinite ease-in-out;
-        }
-        @keyframes skeleton-loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
+        /* 🌟 删除了拖累性能的 img-skeleton 骨架屏动画 */
 
         /* 讨论区按钮及同行布局 (纯 CSS 复刻浅蓝倒角科技风) */
         .hero-desc-row { display: flex; justify-content: space-between; align-items: flex-end; gap: 40px; flex-wrap: wrap; margin-bottom: 3.5rem; }
@@ -415,16 +406,7 @@
             transform: translate(4px, -4px);
         }
 
-        /* 🌟 新增：高级骨架屏呼吸灯动画 (图片加载中时的占位光效) */
-        .img-skeleton {
-            background: linear-gradient(90deg, rgba(255,255,255,0.02) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.02) 75%);
-            background-size: 400% 100%;
-            animation: skeleton-loading 1.5s infinite ease-in-out;
-        }
-        @keyframes skeleton-loading {
-            0% { background-position: 100% 50%; }
-            100% { background-position: 0 50%; }
-        }
+        /* 🌟 删除了拖累性能的 img-skeleton 呼吸灯动画 */
 
         /* 进度条 */
         .skill-item { display: flex; align-items: center; gap: 15px; margin-bottom: 18px; }
@@ -1018,10 +1000,9 @@
 
                 expData.forEach((item, index) => {
                     const card = el('div', 'exp-card-new', `
-                        <!-- 🌟 升级：加入骨架屏类名 img-skeleton -->
-                        <div class="exp-card-img-wrap img-skeleton">
-                            <!-- 🌟 升级：将 src 替换为 data-src，交给底层的提前量懒加载器处理 -->
-                            <img data-src="${item.img}" data-fallback="${item.fallbackImg}" class="smart-lazy" onclick="openLightbox(this.src)" alt="${item.title}">
+                        <!-- 🌟 修复：彻底回归最纯净的原生 img 标签，拒绝任何 JS 拦截，实现秒开 -->
+                        <div class="exp-card-img-wrap">
+                            <img src="${item.img}" onerror="this.src='${item.fallbackImg}'" onclick="openLightbox(this.src)" alt="${item.title}">
                         </div>
                         <div class="exp-card-overlay"></div>
                         
@@ -1100,12 +1081,12 @@
                     </div>
                     
                     <div class="cert-imgs">
-                        <!-- 🌟 升级：为证书图片也包上骨架屏，并使用 smart-lazy -->
-                        <div class="cert-img-wrap img-skeleton">
-                            <img data-src="证书1.jpg" class="cert-img smart-lazy" onclick="openLightbox(this.src)" alt="证书1">
+                        <!-- 🌟 修复：彻底回归原生 img 标签，保证证书图片秒出 -->
+                        <div class="cert-img-wrap">
+                            <img src="证书1.jpg" class="cert-img" onclick="openLightbox(this.src)" alt="证书1">
                         </div>
-                        <div class="cert-img-wrap img-skeleton">
-                            <img data-src="证书2.jpg" class="cert-img smart-lazy" onclick="openLightbox(this.src)" alt="证书2">
+                        <div class="cert-img-wrap">
+                            <img src="证书2.jpg" class="cert-img" onclick="openLightbox(this.src)" alt="证书2">
                         </div>
                     </div>
                 `;
@@ -1440,48 +1421,7 @@
                 const wrapper = document.querySelector('.sticky-wrapper');
                 const container = document.querySelector('.role-cards-container');
                 
-                // ==============================================================
-                // 🌟 新增：高级预判懒加载器 (Smart Pre-fetch Lazy Loader)
-                // ==============================================================
-                const lazyImageObserver = new IntersectionObserver((entries, observer) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            const img = entry.target;
-                            const src = img.getAttribute('data-src');
-                            const fallback = img.getAttribute('data-fallback');
-                            
-                            // 赋值真实图片地址，开始下载
-                            if(src) img.src = src;
-                            
-                            // 容错处理：如果主图下载失败，尝试下载备用图
-                            if (fallback) {
-                                img.onerror = () => { 
-                                    img.src = fallback; 
-                                    img.onerror = null; 
-                                };
-                            }
-                            
-                            // 下载完成瞬间，移除父级的呼吸灯骨架屏特效
-                            img.onload = () => { 
-                                if(img.parentElement.classList.contains('img-skeleton')) {
-                                    img.parentElement.classList.remove('img-skeleton');
-                                }
-                            };
-                            
-                            // 停止观察该图片，释放内存
-                            observer.unobserve(img);
-                        }
-                    });
-                }, { 
-                    // 🌟 核心魔法：探测范围向上下各扩张 800px。
-                    // 意味着你手指还没滑到那里，图片就已经开始在后台偷偷下载了！
-                    rootMargin: "800px 0px 800px 0px" 
-                });
-
-                document.querySelectorAll('.smart-lazy').forEach(img => {
-                    lazyImageObserver.observe(img);
-                });
-
+                // 🌟 修复：彻底删除了庞大且容易在手机端卡死的 lazyImageObserver JS预判拦截代码
 
                 if (!track || !wrapper || !container) return;
 
