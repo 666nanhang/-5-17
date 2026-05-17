@@ -683,6 +683,73 @@
             transform: translateY(-2px);
         }
         
+        /* 🌟 新增：讨论区历史记录看板样式 */
+        .feedback-board {
+            margin-top: 60px;
+            border-top: 1px dashed rgba(0, 240, 255, 0.2);
+            padding-top: 40px;
+            text-align: left;
+        }
+        .feedback-board-title {
+            color: var(--primary);
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.5rem;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
+        }
+        .feedback-board-title::before {
+            content: '>>';
+            animation: blink 1s infinite;
+        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        
+        .feedback-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .feedback-card {
+            background: rgba(5, 10, 20, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-left: 3px solid var(--primary);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+        }
+        .feedback-card:hover {
+            border-color: rgba(0, 240, 255, 0.3);
+            background: rgba(5, 10, 20, 0.8);
+            transform: translateX(4px);
+        }
+        .feedback-time {
+            color: #8b9bb4;
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+            font-family: 'Courier New', Courier, monospace;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 8px;
+        }
+        .feedback-ans { margin-bottom: 12px; }
+        .feedback-ans:last-child { margin-bottom: 0; }
+        .feedback-ans-q {
+            color: #16c73b;
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+            font-family: monospace;
+            font-weight: bold;
+        }
+        .feedback-ans-a {
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            font-family: inherit;
+        }
+
         /* =========================================================
            🌟 独立大图预览层 (Lightbox Overlay)
            ========================================================= */
@@ -1137,6 +1204,15 @@
                                 <button id="discuss-submit-btn" class="discuss-submit" onclick="submitDiscussion()">提交反馈</button>
                             </div>
                         </div>
+
+                        <!-- 🌟 新增：讨论区历史记录看板 DOM 结构 -->
+                        <div class="discuss-container feedback-board">
+                            <h2 class="feedback-board-title">最新讨论记录 / LOGS</h2>
+                            <div id="feedback-list" class="feedback-list">
+                                <div style="color:#8b9bb4; text-align:center; font-family: monospace;">Loading data from Supabase...</div>
+                            </div>
+                        </div>
+
                     </div>
                 `;
                 discussModal.onclick = () => closeModal('discussModal');
@@ -1153,9 +1229,13 @@
                 return lb;
             }
 
+            // 🌟 修改：监听弹窗打开，如果是讨论区，则自动拉取数据
             window.openModal = function(modalId) {
                 document.getElementById(modalId).classList.add('active');
                 document.body.classList.add('modal-open'); 
+                if (modalId === 'discussModal') {
+                    fetchFeedback();
+                }
             };
             window.closeModal = function(modalId) {
                 document.getElementById(modalId).classList.remove('active');
@@ -1176,6 +1256,69 @@
             const supabaseUrl = 'https://uefwsneisirucxcflntg.supabase.co';
             const supabaseKey = 'sb_publishable_UQBZ3cHl_l7ye4vgcxJ-oA_jqkNAZc_';
             const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+            // 防注入小工具
+            function escapeHTML(str) {
+                if (!str) return '';
+                return str.replace(/[&<>'"]/g, tag => ({
+                    '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+                }[tag] || tag));
+            }
+
+            // 🌟 新增：拉取讨论区数据
+            window.fetchFeedback = async function() {
+                const listEl = document.getElementById('feedback-list');
+                if(!listEl) return;
+                
+                try {
+                    // 查询最近的 15 条反馈
+                    const { data, error } = await supabase
+                        .from('feedback')
+                        .select('*')
+                        .order('created_at', { ascending: false })
+                        .limit(15);
+
+                    if (error) throw error;
+
+                    if (data.length === 0) {
+                        listEl.innerHTML = '<div style="color:#8b9bb4; text-align:center; font-family: monospace;">// 暂无讨论记录，快来抢沙发吧！</div>';
+                        return;
+                    }
+
+                    listEl.innerHTML = data.map(item => {
+                        // 格式化时间
+                        const dateObj = new Date(item.created_at);
+                        const dateStr = dateObj.getFullYear() + '/' + (dateObj.getMonth()+1).toString().padStart(2, '0') + '/' + dateObj.getDate().toString().padStart(2, '0') + ' ' + dateObj.getHours().toString().padStart(2, '0') + ':' + dateObj.getMinutes().toString().padStart(2, '0');
+                        
+                        return `
+                            <div class="feedback-card">
+                                <div class="feedback-time">[SYS_TIME]: ${dateStr}</div>
+                                ${item.optimization_suggestions ? `
+                                    <div class="feedback-ans">
+                                        <div class="feedback-ans-q"># Q1. 网页优化建议</div>
+                                        <div class="feedback-ans-a">${escapeHTML(item.optimization_suggestions)}</div>
+                                    </div>
+                                ` : ''}
+                                ${item.good_project_views ? `
+                                    <div class="feedback-ans">
+                                        <div class="feedback-ans-q"># Q2. 什么是好项目</div>
+                                        <div class="feedback-ans-a">${escapeHTML(item.good_project_views)}</div>
+                                    </div>
+                                ` : ''}
+                                ${item.ai_impact_views ? `
+                                    <div class="feedback-ans">
+                                        <div class="feedback-ans-q"># Q3. AI编程的影响</div>
+                                        <div class="feedback-ans-a">${escapeHTML(item.ai_impact_views)}</div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `;
+                    }).join('');
+                } catch (error) {
+                    console.error('拉取记录失败:', error);
+                    listEl.innerHTML = '<div style="color:#ff5f56; text-align:center; font-family: monospace;">[ERROR] 拉取讨论记录失败，请检查数据库 Select 权限。</div>';
+                }
+            };
 
             window.submitDiscussion = async function() {
                 const q1 = document.getElementById('discuss-q1').value;
@@ -1210,11 +1353,12 @@
 
                     alert('感谢您的反馈！提交成功！');
                     
-                    // 成功后清空表单并关闭弹窗
+                    // 🌟 修改：成功后清空表单，并立刻刷新下方的讨论记录，不再关闭弹窗！
                     document.getElementById('discuss-q1').value = '';
                     document.getElementById('discuss-q2').value = '';
                     document.getElementById('discuss-q3').value = '';
-                    closeModal('discussModal');
+                    fetchFeedback(); // 重新拉取数据
+                    
                 } catch (error) {
                     console.error('提交失败:', error);
                     alert('提交失败，请检查网络或相关配置。错误信息: ' + error.message);
