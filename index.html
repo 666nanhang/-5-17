@@ -58,10 +58,26 @@
 
         .main-content { margin-top: 100px; }
 
+        /* =========================================================
+           🌟 工业级：骨架屏加载占位 (Skeleton Progressive Loading)
+           ========================================================= */
+        .img-skeleton {
+            background-color: rgba(10, 18, 35, 0.9) !important;
+            background-image: linear-gradient(90deg, transparent 0%, rgba(0, 240, 255, 0.08) 20%, transparent 40%) !important;
+            background-size: 200% 100% !important;
+            animation: skeleton-scan 1.5s infinite linear !important;
+            color: transparent !important; /* 加载时隐藏原生的破碎图标和alt文本 */
+            min-height: 100px; /* 保证没加载出图片时有一个默认的物理高度撑起排版 */
+        }
+        @keyframes skeleton-scan {
+            0% { background-position: 100% 0; }
+            100% { background-position: -100% 0; }
+        }
+
         /* ===== Hero 核心区 ===== */
         .hero-section { padding: 60px 0 80px 0; }
         .hero-top-layout { display: flex; justify-content: space-between; align-items: flex-start; gap: 30px; }
-        .hero-left-content { flex: 1; max-width: 800px; }
+        .hero-left-content { flex: 1; max-width: 100%; } 
         .hero-right-content { flex-shrink: 0; padding: 8px; background: rgba(10, 18, 35, 0.4); border: 2px solid rgba(255, 255, 255, 0.08); border-radius: 18px; backdrop-filter: blur(10px); box-shadow: var(--shadow); transition: all 0.3s ease; position: relative; z-index: 5; }
         .hero-right-content:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: var(--shadow-hover); }
         .hero-formal-photo { display: block; width: clamp(110px, 15vw, 140px); height: auto; border-radius: 12px; object-fit: contain; }
@@ -73,19 +89,18 @@
         .hero-avatar:hover { transform: scale(1.05) rotate(5deg); }
         .hero-slogan { font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 800; color: #94a3b8; margin-bottom: 2.5rem; letter-spacing: -0.01em; }
         
-        /* 🌟 删除了拖累性能的 img-skeleton 骨架屏动画 */
-
-        /* 讨论区按钮及同行布局 (纯 CSS 复刻浅蓝倒角科技风) */
+        /* 讨论区按钮及同行布局 */
         .hero-desc-row { display: flex; justify-content: space-between; align-items: flex-end; gap: 40px; flex-wrap: wrap; margin-bottom: 3.5rem; }
         .hero-desc-row .hero-desc { margin-bottom: 0; flex: 1; min-width: 300px; }
+        .hero-desc { font-size: 1.15rem; line-height: 1.8; color: var(--text-light); max-width: 750px; }
+        .hero-desc b { color: #fff; font-weight: 700; }
         
         .hero-discuss-wrap {
             position: relative;
             display: inline-block;
-            padding: 8px; /* 给边角的科技装饰线留出呼吸空间 */
+            padding: 8px; 
         }
         
-        /* 用多重线性渐变手搓四周的蓝色科技断线装饰 */
         .hero-discuss-wrap::before {
             content: '';
             position: absolute;
@@ -94,13 +109,10 @@
             background: 
                 linear-gradient(to right, #8bbbe5 2px, transparent 2px) 0 15px / 2px 15px no-repeat,
                 linear-gradient(to bottom, #8bbbe5 2px, transparent 2px) 15px 0 / 15px 2px no-repeat,
-                
                 linear-gradient(to left, #8bbbe5 2px, transparent 2px) 100% 15px / 2px 15px no-repeat,
                 linear-gradient(to bottom, #8bbbe5 2px, transparent 2px) calc(100% - 15px) 0 / 15px 2px no-repeat,
-                
                 linear-gradient(to right, #8bbbe5 2px, transparent 2px) 0 calc(100% - 15px) / 2px 15px no-repeat,
                 linear-gradient(to top, #8bbbe5 2px, transparent 2px) 15px 100% / 15px 2px no-repeat,
-                
                 linear-gradient(to left, #8bbbe5 2px, transparent 2px) 100% calc(100% - 15px) / 2px 15px no-repeat,
                 linear-gradient(to top, #8bbbe5 2px, transparent 2px) calc(100% - 15px) 100% / 15px 2px no-repeat;
             transition: all 0.3s;
@@ -110,9 +122,7 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            /* 完美还原参考图的浅蓝/天蓝色渐变 */
             background: linear-gradient(180deg, #cbe5fa 0%, #8dc1eb 100%);
-            /* 还原图片中的黑色楷体/衬线中式美学字体 */
             color: #0b1118;
             font-size: 3rem;
             font-family: 'STKaiti', 'KaiTi', '楷体', 'Times New Roman', serif;
@@ -120,7 +130,6 @@
             padding: 10px 48px;
             letter-spacing: 6px;
             text-decoration: none;
-            /* 核心突破：纯CSS切割经典机甲倒角 */
             clip-path: polygon(18px 0, calc(100% - 18px) 0, 100% 18px, 100% calc(100% - 18px), calc(100% - 18px) 100%, 18px 100%, 0 calc(100% - 18px), 0 18px);
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             white-space: nowrap;
@@ -147,45 +156,13 @@
         .card:hover { box-shadow: var(--shadow-hover); transform: translateY(-5px); border-color: rgba(0, 240, 255, 0.4); }
 
         /* =========================================================
-           🌟 核心身份卡片区 (绝对不会失效的动态响应式滚动轨道)
+           🌟 核心身份卡片区 
            ========================================================= */
-        .sticky-wrapper {
-            position: relative;
-            height: 300vh; 
-            z-index: 10;
-        }
-        
-        .sticky-content {
-            position: -webkit-sticky; 
-            position: sticky;
-            top: 0;
-            width: 100%;
-            height: 100vh; 
-            display: flex;
-            flex-direction: column;
-            justify-content: center; 
-            overflow: hidden;
-        }
-        
-        .sticky-container {
-            width: 100%;
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
-
-        .role-cards-container {
-            width: 100%;
-            overflow: hidden; 
-        }
-        
-        .role-cards-track {
-            display: flex;
-            gap: 20px;
-            --scroll-x: 0px;
-            transform: translateX(var(--scroll-x));
-            will-change: transform;
-        }
+        .sticky-wrapper { position: relative; height: 300vh; z-index: 10; }
+        .sticky-content { position: -webkit-sticky; position: sticky; top: 0; width: 100%; height: 100vh; display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
+        .sticky-container { width: 100%; max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+        .role-cards-container { width: 100%; overflow: hidden; }
+        .role-cards-track { display: flex; gap: 20px; --scroll-x: 0px; transform: translateX(var(--scroll-x)); will-change: transform; }
 
         .role-card {
             flex: 0 0 85%; max-width: 320px; aspect-ratio: 3 / 4.2; position: relative;
@@ -200,13 +177,7 @@
             border-color: var(--primary);
         }
         
-        /* =========================================================
-           🌟 纯 CSS 绘制的数据流未来科技背景 (代替图片)
-           ========================================================= */
-        .tech-bg-container {
-            position: absolute; inset: 0; z-index: 1; overflow: hidden;
-        }
-        
+        .tech-bg-container { position: absolute; inset: 0; z-index: 1; overflow: hidden; }
         .tech-bg-1 { --theme-r: 0; --theme-g: 240; --theme-b: 255; background: linear-gradient(145deg, #01121a 0%, #021a2b 100%); }
         .tech-bg-2 { --theme-r: 0; --theme-g: 150; --theme-b: 255; background: linear-gradient(145deg, #010a1a 0%, #051633 100%); }
         .tech-bg-3 { --theme-r: 140; --theme-g: 80; --theme-b: 255; background: linear-gradient(145deg, #07021a 0%, #110533 100%); }
@@ -221,70 +192,28 @@
             opacity: 0.6;
         }
 
-        .tech-beam {
-            position: absolute;
-            background: linear-gradient(90deg, transparent, rgba(var(--theme-r), var(--theme-g), var(--theme-b), 0.9), transparent);
-        }
-        .beam-1 {
-            height: 1px; width: 200%; top: 25%; left: -50%;
-            transform: rotate(-25deg);
-            box-shadow: 0 0 15px 2px rgba(var(--theme-r), var(--theme-g), var(--theme-b), 0.6);
-        }
-        .beam-2 {
-            height: 2px; width: 150%; top: 75%; left: -20%;
-            transform: rotate(15deg);
-            filter: blur(1px); opacity: 0.6;
-        }
-        .beam-horizontal {
-            height: 3px; width: 150%; top: 50%; left: -25%;
-            background: linear-gradient(90deg, transparent, rgba(var(--theme-r), var(--theme-g), var(--theme-b), 1), transparent);
-            filter: blur(2px); opacity: 0.8;
-            box-shadow: 0 0 20px 3px rgba(var(--theme-r), var(--theme-g), var(--theme-b), 0.8);
-            animation: techPulse 3s infinite ease-in-out;
-        }
+        .tech-beam { position: absolute; background: linear-gradient(90deg, transparent, rgba(var(--theme-r), var(--theme-g), var(--theme-b), 0.9), transparent); }
+        .beam-1 { height: 1px; width: 200%; top: 25%; left: -50%; transform: rotate(-25deg); box-shadow: 0 0 15px 2px rgba(var(--theme-r), var(--theme-g), var(--theme-b), 0.6); }
+        .beam-2 { height: 2px; width: 150%; top: 75%; left: -20%; transform: rotate(15deg); filter: blur(1px); opacity: 0.6; }
+        .beam-horizontal { height: 3px; width: 150%; top: 50%; left: -25%; background: linear-gradient(90deg, transparent, rgba(var(--theme-r), var(--theme-g), var(--theme-b), 1), transparent); filter: blur(2px); opacity: 0.8; box-shadow: 0 0 20px 3px rgba(var(--theme-r), var(--theme-g), var(--theme-b), 0.8); animation: techPulse 3s infinite ease-in-out; }
 
-        .tech-shape {
-            position: absolute;
-            border: 1px solid rgba(var(--theme-r), var(--theme-g), var(--theme-b), 0.15);
-            background: linear-gradient(135deg, rgba(var(--theme-r), var(--theme-g), var(--theme-b), 0.05), transparent);
-        }
+        .tech-shape { position: absolute; border: 1px solid rgba(var(--theme-r), var(--theme-g), var(--theme-b), 0.15); background: linear-gradient(135deg, rgba(var(--theme-r), var(--theme-g), var(--theme-b), 0.05), transparent); }
         .shape-1 { width: 150px; height: 150px; top: -30px; right: -30px; transform: rotate(45deg); border-radius: 12px; animation: techFloat 6s infinite; }
         .shape-2 { width: 250px; height: 40px; bottom: 15%; left: -50px; transform: skewX(-45deg); }
         
-        .tech-data {
-            position: absolute; right: 24px; top: 40%;
-            color: rgba(var(--theme-r), var(--theme-g), var(--theme-b), 0.4);
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 10px; line-height: 1.6; text-align: right;
-            letter-spacing: 2px; font-weight: bold;
-        }
+        .tech-data { position: absolute; right: 24px; top: 40%; color: rgba(var(--theme-r), var(--theme-g), var(--theme-b), 0.4); font-family: 'Courier New', Courier, monospace; font-size: 10px; line-height: 1.6; text-align: right; letter-spacing: 2px; font-weight: bold; }
         .tech-data span { display: block; }
 
-        @keyframes techPulse {
-            0%, 100% { opacity: 0.8; transform: scaleX(1); }
-            50% { opacity: 0.4; transform: scaleX(0.9); }
-        }
-        @keyframes techFloat {
-            0%, 100% { transform: translateY(0) rotate(45deg); }
-            50% { transform: translateY(10px) rotate(45deg); }
-        }
+        @keyframes techPulse { 0%, 100% { opacity: 0.8; transform: scaleX(1); } 50% { opacity: 0.4; transform: scaleX(0.9); } }
+        @keyframes techFloat { 0%, 100% { transform: translateY(0) rotate(45deg); } 50% { transform: translateY(10px) rotate(45deg); } }
         
         .role-card-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(3,8,17,0.7) 0%, rgba(3,8,17,0.1) 40%, rgba(3,8,17,0.98) 100%); z-index: 2; transition: background 0.3s; }
         .role-card:hover .role-card-overlay { background: linear-gradient(to bottom, rgba(3,8,17,0.5) 0%, rgba(3,8,17,0.05) 40%, rgba(3,8,17,0.95) 100%); }
         
         .role-card-content { position: relative; z-index: 3; display: flex; flex-direction: column; height: 100%; padding: 28px 24px; color: #fff; }
         
-        .role-card-top { 
-            font-size: 0.9rem; font-weight: 600; letter-spacing: 1px; opacity: 0.95; margin-bottom: 20px; 
-            text-shadow: 0 2px 4px rgba(0,0,0,0.8); font-family: 'Courier New', Courier, monospace; color: var(--primary); 
-        }
-        
-        .role-card-title { 
-            font-size: 2.2rem; font-weight: 900; line-height: 1.2; margin-top: auto; margin-bottom: 20px; 
-            text-shadow: 0 4px 15px rgba(0,0,0,0.9), 0 0 20px rgba(0, 240, 255, 0.4); 
-            display: flex; flex-direction: column; gap: 6px; 
-        }
-        
+        .role-card-top { font-size: 0.9rem; font-weight: 600; letter-spacing: 1px; opacity: 0.95; margin-bottom: 20px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); font-family: 'Courier New', Courier, monospace; color: var(--primary); }
+        .role-card-title { font-size: 2.2rem; font-weight: 900; line-height: 1.2; margin-top: auto; margin-bottom: 20px; text-shadow: 0 4px 15px rgba(0,0,0,0.9), 0 0 20px rgba(0, 240, 255, 0.4); display: flex; flex-direction: column; gap: 6px; }
         .role-card-bottom { font-size: 0.95rem; font-weight: 700; display: flex; justify-content: space-between; align-items: center; opacity: 0.95; transition: color 0.3s, transform 0.3s; }
         .role-card:hover .role-card-bottom { color: var(--primary); transform: translateX(6px); }
 
@@ -302,16 +231,10 @@
             overflow: hidden;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
-            opacity: 0; 
-            transform: translateY(30px);
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
             min-height: 480px; 
-        }
-        .exp-card-new.animate-in {
-            opacity: 1; 
-            transform: translateY(0);
         }
         .exp-card-new:hover {
             border-color: var(--primary);
@@ -325,6 +248,7 @@
             width: 100%;
             height: 100%; 
             z-index: 0;
+            background: var(--bg);
         }
         .exp-card-img-wrap img {
             width: 100%;
@@ -333,6 +257,7 @@
             object-position: top;
             transition: transform 0.5s ease;
             cursor: zoom-in;
+            display: block;
         }
         .exp-card-new:hover .exp-card-img-wrap img {
             transform: scale(1.05);
@@ -406,8 +331,6 @@
             transform: translate(4px, -4px);
         }
 
-        /* 🌟 删除了拖累性能的 img-skeleton 呼吸灯动画 */
-
         /* 进度条 */
         .skill-item { display: flex; align-items: center; gap: 15px; margin-bottom: 18px; }
         .skill-name { width: 100px; font-weight: 500; color: var(--text); font-size: 0.95rem; }
@@ -415,6 +338,8 @@
         .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); border-radius: 10px; box-shadow: 0 0 10px var(--primary); }
 
         /* 布局 */
+        .grid-2, .grid-3 { display: grid; gap: 24px; margin-bottom: 40px; }
+        
         /* 🌟 证书图片排版优化 */
         .cert-imgs { 
             display: flex; 
@@ -422,7 +347,6 @@
             margin-top: 24px; 
             flex-wrap: wrap; 
         }
-        /* 增加证书图片的父容器用于显示骨架屏 */
         .cert-img-wrap {
             height: 220px; 
             border-radius: 12px;
@@ -442,17 +366,12 @@
             max-width: 100%;
             cursor: zoom-in; 
             object-fit: cover; 
-            background: rgba(0,0,0,0.2); 
-            display: block; /* 消除底部空隙 */
+            display: block; 
         }
 
         @media (min-width: 768px) { 
             .grid-2 { grid-template-columns: repeat(2,1fr); } 
-            .role-card { 
-                flex: 0 0 clamp(340px, 42%, 460px); 
-                max-width: none; 
-                aspect-ratio: 3 / 4.2; 
-            }
+            .role-card { flex: 0 0 clamp(340px, 42%, 460px); max-width: none; aspect-ratio: 3 / 4.2; }
         }
         @media (min-width: 1024px) { .grid-3 { grid-template-columns: repeat(3,1fr); } }
 
@@ -477,7 +396,7 @@
             .hero-slogan { font-size: 1.6rem; }
             .hero-desc { text-align: left; font-size: 1.05rem; } 
             
-            /* 🌟 手机端讨论区按钮适配 */
+            /* 手机端讨论区按钮适配 */
             .hero-desc-row { flex-direction: column; align-items: center; gap: 24px; margin-bottom: 2.5rem; }
             .hero-desc-row .hero-desc { min-width: auto; width: 100%; text-align: left; }
             .discuss-btn { font-size: 2rem; padding: 10px 40px; }
@@ -486,9 +405,6 @@
             .card { padding: 20px; }
             .section-title { font-size: 1.5rem; }
             #back-to-top { width: 40px; height: 40px; bottom: 20px; right: 20px; font-size: 18px; }
-            
-            /* 🌟 修复：彻底移除了阻碍手机端吸顶联动的 overflow 和 transform 限制，
-               让手机往下划时，同样能触发电脑端丝滑的“下划转横滑”效果 */
         }
 
         /* =========================================================
@@ -552,13 +468,10 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             border: 1px solid rgba(255,255,255,0.1);
             cursor: zoom-in; 
-            
-            /* 🌟 优化：加入图片底色占位，即便网速慢没加载出来，也会有个高级的框撑着 */
-            background: rgba(255, 255, 255, 0.05);
-            min-height: 100px; 
+            display: block;
         }
 
-        /* 🌟 深度重构：极客终端风格讨论区样式 */
+        /* 🌟 极客终端风格讨论区样式 */
         .discuss-container {
             width: 100%;
             max-width: 800px;
@@ -585,7 +498,6 @@
             color: var(--primary);
         }
         
-        /* 终端窗口外框 */
         .terminal-window {
             background: #050a14;
             border: 1px solid rgba(0, 240, 255, 0.15);
@@ -601,7 +513,6 @@
             transform: translateY(-2px);
         }
         
-        /* 科技扫描线光效 */
         .terminal-window::after {
             content: '';
             position: absolute;
@@ -621,7 +532,6 @@
             100% { transform: translateY(100%); }
         }
 
-        /* 终端顶部状态栏 */
         .terminal-header {
             background: rgba(255, 255, 255, 0.04);
             padding: 10px 16px;
@@ -630,15 +540,13 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
         .term-title {
-            margin: 0 auto; /* 让标题完美居中 */
+            margin: 0 auto;
             color: rgba(255,255,255,0.4); font-family: monospace; font-size: 0.85rem; letter-spacing: 1px;
         }
 
-        /* 终端输入区 */
         .terminal-body {
             display: flex;
             padding: 16px;
-            /* 隐约的代码行背景纹理 */
             background: repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(0,240,255,0.03) 27px, rgba(0,240,255,0.03) 28px);
         }
         .term-prompt {
@@ -657,7 +565,7 @@
             color: #e2e8f0;
             font-size: 1.05rem;
             font-family: 'Courier New', Courier, monospace;
-            line-height: 28px; /* 严格对齐背景辅助线 */
+            line-height: 28px; 
             resize: vertical;
             outline: none;
         }
@@ -665,7 +573,7 @@
             color: rgba(255, 255, 255, 0.15);
         }
         .discuss-input:focus {
-            color: var(--primary); /* 聚焦时文字也变更为高亮的赛博青色 */
+            color: var(--primary);
         }
         
         .discuss-submit-wrap {
@@ -688,8 +596,8 @@
             box-shadow: 0 0 25px rgba(0, 240, 255, 0.5);
             transform: translateY(-2px);
         }
-        
-        /* 🌟 新增：讨论区历史记录看板样式 */
+
+        /* 讨论区历史记录看板样式 */
         .feedback-board {
             margin-top: 60px;
             border-top: 1px dashed rgba(0, 240, 255, 0.2);
@@ -755,7 +663,7 @@
             white-space: pre-wrap;
             font-family: inherit;
         }
-
+        
         /* =========================================================
            🌟 独立大图预览层 (Lightbox Overlay)
            ========================================================= */
@@ -782,7 +690,7 @@
 <body>
     <div id="root"></div>
     
-    <!-- 🌟 新增：引入 Supabase JS 客户端 SDK -->
+    <!-- 引入 Supabase JS 客户端 SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <script>
@@ -837,7 +745,6 @@
                 section.id = 'hero';
                 const topLayout = el('div', 'hero-top-layout', '');
                 
-                // 放开左侧容器的宽度限制，让讨论区按钮能被推到页面最右侧
                 const leftContent = el('div', 'hero-left-content', '');
                 leftContent.style.maxWidth = '100%';
                 
@@ -845,22 +752,21 @@
                 const mainRow = el('div', 'hero-main-row', '');
                 const nameWrap = el('div', 'title-wrap', `<h1 class="hero-name">${resume.basic.name}<span class="hero-dot">.</span></h1>`);
                 
-                // 🌟 优化：给头像加上 fetchpriority="high" 和 decoding="async"，抢占最高加载优先级
+                // 🌟 核心优化 1：给首屏最重要的头像，设置优先级最高，取消懒加载，加上秒脱落的骨架屏
                 const avatar = el('img', 'hero-avatar img-skeleton', ''); 
                 avatar.src = '86af336cd3ed9a3598b78bfc2b6a09fc.jpg'; 
                 avatar.alt = '个人头像';
-                avatar.setAttribute('fetchpriority', 'high');
+                avatar.setAttribute('fetchpriority', 'high'); 
                 avatar.setAttribute('decoding', 'async');
+                avatar.onload = function() { this.classList.remove('img-skeleton'); };
                 
                 mainRow.append(nameWrap, avatar);
                 
                 const slogan = el('h2', 'hero-slogan', '向阳而生，步履不停。');
                 
-                // 🌟 新增：使用弹性布局将描述文案和讨论区红框按钮包裹在同一行
                 const descRow = el('div', 'hero-desc-row', '');
                 const desc = el('p', 'hero-desc', '河南牧业经济学院的<b>大一新生</b>，醉心<b>AI赋能</b>创作，执着光影视觉美学；探寻代码与艺术的共生巅峰。');
                 const discussWrap = el('div', 'hero-discuss-wrap', `
-                    <!-- 将点击事件改为打开新的讨论区专属弹窗 -->
                     <a href="javascript:void(0);" class="discuss-btn" onclick="openModal('discussModal')">讨论区</a>
                 `);
                 descRow.append(desc, discussWrap);
@@ -930,22 +836,13 @@
                     
                     if (data.id === 'trigger-ai') {
                         card.href = "javascript:void(0);";
-                        card.onclick = (e) => {
-                            e.preventDefault();
-                            openModal('aiModal');
-                        };
+                        card.onclick = (e) => { e.preventDefault(); openModal('aiModal'); };
                     } else if (data.id === 'trigger-ppt') {
                         card.href = "javascript:void(0);";
-                        card.onclick = (e) => {
-                            e.preventDefault();
-                            openModal('pptModal');
-                        };
+                        card.onclick = (e) => { e.preventDefault(); openModal('pptModal'); };
                     } else if (data.id === 'trigger-media') {
                         card.href = "javascript:void(0);";
-                        card.onclick = (e) => {
-                            e.preventDefault();
-                            openModal('mediaModal');
-                        };
+                        card.onclick = (e) => { e.preventDefault(); openModal('mediaModal'); };
                     } else {
                         card.href = "#"; 
                     }
@@ -970,52 +867,42 @@
                 
                 const expData = [
                     {
-                        title: "个人知识库搭建",
-                        role: "系统搭建与维护",
-                        date: "2025.09 - 至今",
+                        title: "个人知识库搭建", role: "系统搭建与维护", date: "2025.09 - 至今",
                         desc: "使用Obsidian记录个人知识库，系统搭建个人知识体系。",
-                        tags: ["Obsidian", "知识管理", "系统思维"],
-                        img: "知识库.png",
-                        fallbackImg: "知识库.jpg"
+                        tags: ["Obsidian", "知识管理", "系统思维"], img: "知识库.png", fallbackImg: "知识库.jpg"
                     },
                     {
-                        title: "剪辑",
-                        role: "自媒体运营/视频剪辑",
-                        date: "2025.11 - 至今",
+                        title: "剪辑", role: "自媒体运营/视频剪辑", date: "2025.11 - 至今",
                         desc: "自学剪映并用于给博主及个人自媒体账号剪辑，输出高质量视频内容。",
-                        tags: ["剪映", "视频制作", "自媒体运营"],
-                        img: "剪辑.png",
-                        fallbackImg: "剪辑.jpg"
+                        tags: ["剪映", "视频制作", "自媒体运营"], img: "剪辑.png", fallbackImg: "剪辑.jpg"
                     },
                     {
-                        title: "AI Coding",
-                        role: "独立开发者",
-                        date: "2026.03",
+                        title: "AI Coding", role: "独立开发者", date: "2026.03",
                         desc: "使用AI Coding开发健康饮食网站，通过科学配餐建议，收益用户200+。",
-                        tags: ["AI Coding", "Web开发"],
-                        img: "健康饮食.png",
-                        fallbackImg: "健康饮食.jpg"
+                        tags: ["AI Coding", "Web开发"], img: "健康饮食.png", fallbackImg: "健康饮食.jpg"
                     }
                 ];
 
                 expData.forEach((item, index) => {
                     const card = el('div', 'exp-card-new', `
-                        <!-- 🌟 修复：彻底回归最纯净的原生 img 标签，拒绝任何 JS 拦截，实现秒开 -->
+                        <!-- 🌟 核心优化 2：给大图加上 loading="lazy"（不出现在首屏），
+                             加上 async解码，加上自带光波扫描的骨架屏（onload瞬间剥离） -->
                         <div class="exp-card-img-wrap">
-                            <img src="${item.img}" onerror="this.src='${item.fallbackImg}'" onclick="openLightbox(this.src)" alt="${item.title}">
+                            <img class="img-skeleton" src="${item.img}" 
+                                 loading="lazy" decoding="async" 
+                                 onload="this.classList.remove('img-skeleton')" 
+                                 onerror="this.src='${item.fallbackImg}'; this.classList.remove('img-skeleton');" 
+                                 onclick="openLightbox(this.src)" alt="${item.title}">
                         </div>
                         <div class="exp-card-overlay"></div>
                         
                         <div class="exp-card-content">
                             <h3 class="exp-card-title">${item.title}</h3>
                             <div class="exp-card-meta">${item.role} · ${item.date}</div>
-                            
                             <div class="exp-card-tags">
                                 ${item.tags.map(t => `<span class="exp-card-tag">${t}</span>`).join('')}
                             </div>
-                            
                             <p class="exp-card-desc">${item.desc}</p>
-                            
                             <svg class="exp-card-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="7" y1="17" x2="17" y2="7"></line>
                                 <polyline points="7 7 17 7 17 17"></polyline>
@@ -1081,12 +968,12 @@
                     </div>
                     
                     <div class="cert-imgs">
-                        <!-- 🌟 修复：彻底回归原生 img 标签，保证证书图片秒出 -->
+                        <!-- 🌟 核心优化 3：证书图同样配置骨架屏懒加载，不阻塞首屏资源下载 -->
                         <div class="cert-img-wrap">
-                            <img src="证书1.jpg" class="cert-img" onclick="openLightbox(this.src)" alt="证书1">
+                            <img src="证书1.jpg" class="cert-img img-skeleton" loading="lazy" decoding="async" onload="this.classList.remove('img-skeleton')" onclick="openLightbox(this.src)" alt="证书1">
                         </div>
                         <div class="cert-img-wrap">
-                            <img src="证书2.jpg" class="cert-img" onclick="openLightbox(this.src)" alt="证书2">
+                            <img src="证书2.jpg" class="cert-img img-skeleton" loading="lazy" decoding="async" onload="this.classList.remove('img-skeleton')" onclick="openLightbox(this.src)" alt="证书2">
                         </div>
                     </div>
                 `;
@@ -1104,17 +991,13 @@
                         <svg viewBox="0 0 24 24" width="40" height="40" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                     </button>
                     <div class="modal-container" onclick="event.stopPropagation()">
-                        <h1 class="ai-modal-title">
-                            <span class="ai-solid">AI编程</span>
-                            <span class="ai-outline">AI</span>
-                        </h1>
+                        <h1 class="ai-modal-title"><span class="ai-solid">AI编程</span><span class="ai-outline">AI</span></h1>
                         <p class="ai-modal-subtitle">+ AI PROGRAMMING +</p>
-                        
                         <div class="modal-image-list">
-                            <!-- 🌟 修复：彻底移除所有弹窗图片的 loading="lazy" -->
-                            <img src="龙虾.png" class="modal-img" alt="龙虾" ondblclick="openLightbox(this.src)">
-                            <img src="资讯.png" class="modal-img" alt="资讯" ondblclick="openLightbox(this.src)">
-                            <img src="WorkBuddy.png" class="modal-img" alt="WorkBuddy" ondblclick="openLightbox(this.src)">
+                            <!-- 🌟 核心优化 4：弹窗内的图片利用原生懒加载+骨架屏保护，防止没点开弹窗时抢占主页网速 -->
+                            <img src="龙虾.png" class="modal-img img-skeleton" loading="lazy" decoding="async" onload="this.classList.remove('img-skeleton')" alt="龙虾" ondblclick="openLightbox(this.src)">
+                            <img src="资讯.png" class="modal-img img-skeleton" loading="lazy" decoding="async" onload="this.classList.remove('img-skeleton')" alt="资讯" ondblclick="openLightbox(this.src)">
+                            <img src="WorkBuddy.png" class="modal-img img-skeleton" loading="lazy" decoding="async" onload="this.classList.remove('img-skeleton')" alt="WorkBuddy" ondblclick="openLightbox(this.src)">
                         </div>
                     </div>
                 `;
@@ -1128,16 +1011,11 @@
                         <svg viewBox="0 0 24 24" width="40" height="40" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                     </button>
                     <div class="modal-container" onclick="event.stopPropagation()">
-                        <h1 class="ai-modal-title">
-                            <span class="ai-solid">PPT设计者</span>
-                            <span class="ai-outline">PPT</span>
-                        </h1>
+                        <h1 class="ai-modal-title"><span class="ai-solid">PPT设计者</span><span class="ai-outline">PPT</span></h1>
                         <p class="ai-modal-subtitle">+ PPT DESIGNER +</p>
-                        
                         <div class="modal-image-list">
-                            <!-- 🌟 修复：彻底移除所有弹窗图片的 loading="lazy" -->
-                            <img src="PPT1.png" class="modal-img" alt="慧瞰农域 PPT" ondblclick="openLightbox(this.src)">
-                            <img src="PPT2.png" class="modal-img" alt="绿水青山 PPT" ondblclick="openLightbox(this.src)">
+                            <img src="PPT1.png" class="modal-img img-skeleton" loading="lazy" decoding="async" onload="this.classList.remove('img-skeleton')" alt="慧瞰农域 PPT" ondblclick="openLightbox(this.src)">
+                            <img src="PPT2.png" class="modal-img img-skeleton" loading="lazy" decoding="async" onload="this.classList.remove('img-skeleton')" alt="绿水青山 PPT" ondblclick="openLightbox(this.src)">
                         </div>
                     </div>
                 `;
@@ -1151,15 +1029,10 @@
                         <svg viewBox="0 0 24 24" width="40" height="40" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                     </button>
                     <div class="modal-container" onclick="event.stopPropagation()">
-                        <h1 class="ai-modal-title">
-                            <span class="ai-solid">自媒体创作者</span>
-                            <span class="ai-outline">自媒体</span>
-                        </h1>
+                        <h1 class="ai-modal-title"><span class="ai-solid">自媒体创作者</span><span class="ai-outline">自媒体</span></h1>
                         <p class="ai-modal-subtitle">+ MEDIA CREATOR +</p>
-                        
                         <div class="modal-image-list">
-                            <!-- 🌟 修复：彻底移除所有弹窗图片的 loading="lazy" -->
-                            <img src="自媒体.png" class="modal-img" alt="自媒体展示" ondblclick="openLightbox(this.src)" onerror="this.src='自媒体.jpg'">
+                            <img src="自媒体.png" class="modal-img img-skeleton" loading="lazy" decoding="async" onload="this.classList.remove('img-skeleton')" alt="自媒体展示" ondblclick="openLightbox(this.src)" onerror="this.src='自媒体.jpg'; this.classList.remove('img-skeleton');">
                         </div>
                     </div>
                 `;
@@ -1225,7 +1098,7 @@
                             </div>
                         </div>
 
-                        <!-- 🌟 新增：讨论区历史记录看板 DOM 结构 -->
+                        <!-- 讨论区历史记录看板 DOM 结构 -->
                         <div class="discuss-container feedback-board">
                             <h2 class="feedback-board-title">最新讨论记录 / LOGS</h2>
                             <div id="feedback-list" class="feedback-list">
@@ -1249,7 +1122,7 @@
                 return lb;
             }
 
-            // 🌟 修改：监听弹窗打开，如果是讨论区，则自动拉取数据
+            // 监听弹窗打开，如果是讨论区，则自动拉取数据
             window.openModal = function(modalId) {
                 document.getElementById(modalId).classList.add('active');
                 document.body.classList.add('modal-open'); 
@@ -1285,13 +1158,12 @@
                 }[tag] || tag));
             }
 
-            // 🌟 新增：拉取讨论区数据
+            // 拉取讨论区数据
             window.fetchFeedback = async function() {
                 const listEl = document.getElementById('feedback-list');
                 if(!listEl) return;
                 
                 try {
-                    // 查询最近的 15 条反馈
                     const { data, error } = await supabase
                         .from('feedback')
                         .select('*')
@@ -1306,7 +1178,6 @@
                     }
 
                     listEl.innerHTML = data.map(item => {
-                        // 格式化时间
                         const dateObj = new Date(item.created_at);
                         const dateStr = dateObj.getFullYear() + '/' + (dateObj.getMonth()+1).toString().padStart(2, '0') + '/' + dateObj.getDate().toString().padStart(2, '0') + ' ' + dateObj.getHours().toString().padStart(2, '0') + ':' + dateObj.getMinutes().toString().padStart(2, '0');
                         
@@ -1345,39 +1216,31 @@
                 const q2 = document.getElementById('discuss-q2').value;
                 const q3 = document.getElementById('discuss-q3').value;
 
-                // 简单的空白校验
                 if (!q1.trim() && !q2.trim() && !q3.trim()) {
                     alert('请至少填写一项反馈内容哦！');
                     return;
                 }
 
-                // 交互体验：按钮状态变为“提交中...”并禁用防连点
                 const btn = document.getElementById('discuss-submit-btn');
                 const originalText = btn.innerText;
                 btn.innerText = '提交中...';
                 btn.disabled = true;
 
                 try {
-                    // 向 'feedback' 表插入数据
                     const { error } = await supabase
                         .from('feedback')
                         .insert([
-                            {
-                                optimization_suggestions: q1,
-                                good_project_views: q2,
-                                ai_impact_views: q3
-                            }
+                            { optimization_suggestions: q1, good_project_views: q2, ai_impact_views: q3 }
                         ]);
 
                     if (error) throw error;
 
                     alert('感谢您的反馈！提交成功！');
                     
-                    // 🌟 修改：成功后清空表单，并立刻刷新下方的讨论记录，不再关闭弹窗！
                     document.getElementById('discuss-q1').value = '';
                     document.getElementById('discuss-q2').value = '';
                     document.getElementById('discuss-q3').value = '';
-                    fetchFeedback(); // 重新拉取数据
+                    fetchFeedback(); 
                     
                 } catch (error) {
                     console.error('提交失败:', error);
@@ -1421,8 +1284,6 @@
                 const wrapper = document.querySelector('.sticky-wrapper');
                 const container = document.querySelector('.role-cards-container');
                 
-                // 🌟 修复：彻底删除了庞大且容易在手机端卡死的 lazyImageObserver JS预判拦截代码
-
                 if (!track || !wrapper || !container) return;
 
                 let currentX = 0;
@@ -1439,36 +1300,18 @@
 
                     if (scrollableDistance > 0) {
                         let progress = -rect.top / scrollableDistance;
-                        
                         progress = Math.max(0, Math.min(1, progress));
-                        
                         targetX = -(maxSlide * progress);
                     }
 
                     currentX += (targetX - currentX) * 0.06;
-                    
                     if (Math.abs(targetX - currentX) < 0.1) currentX = targetX;
-                    
                     track.style.setProperty('--scroll-x', `${currentX}px`);
 
                     requestAnimationFrame(renderLoop);
                 };
 
                 requestAnimationFrame(renderLoop);
-
-                const observer = new IntersectionObserver((entries, obs) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            entry.target.classList.add('animate-in');
-                            obs.unobserve(entry.target);
-                        }
-                    });
-                }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
-
-                document.querySelectorAll('.exp-card-new').forEach((item, index) => {
-                    item.style.transitionDelay = `${(index % 3) * 0.1}s`;
-                    observer.observe(item);
-                });
             };
 
             setTimeout(initAdvancedAnimations, 150);
