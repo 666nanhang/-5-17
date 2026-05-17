@@ -475,7 +475,7 @@
             .hero-slogan { font-size: 1.6rem; }
             .hero-desc { text-align: left; font-size: 1.05rem; } 
             
-            /* 🌟 新增：手机端讨论区按钮适配 */
+            /* 🌟 手机端讨论区按钮适配 */
             .hero-desc-row { flex-direction: column; align-items: center; gap: 24px; margin-bottom: 2.5rem; }
             .hero-desc-row .hero-desc { min-width: auto; width: 100%; text-align: left; }
             .discuss-btn { font-size: 2rem; padding: 10px 40px; }
@@ -485,16 +485,8 @@
             .section-title { font-size: 1.5rem; }
             #back-to-top { width: 40px; height: 40px; bottom: 20px; right: 20px; font-size: 18px; }
             
-            .role-cards-container {
-                overflow-x: auto;
-                scroll-snap-type: x mandatory;
-                -webkit-overflow-scrolling: touch;
-                scrollbar-width: none;
-            }
-            .role-cards-container::-webkit-scrollbar { display: none; }
-            .role-cards-track {
-                transform: none !important; 
-            }
+            /* 🌟 修复：彻底移除了阻碍手机端吸顶联动的 overflow 和 transform 限制，
+               让手机往下划时，同样能触发电脑端丝滑的“下划转横滑”效果 */
         }
 
         /* =========================================================
@@ -929,7 +921,9 @@
                 expData.forEach((item, index) => {
                     const card = el('div', 'exp-card-new', `
                         <div class="exp-card-img-wrap">
-                            <img src="${item.img}" onerror="this.src='${item.fallbackImg}'" onclick="openLightbox(this.src)" loading="lazy" class="lazy-img" onload="this.classList.add('loaded')" alt="${item.title}">
+                            <!-- 🌟 修复：彻底移除 loading="lazy"、class="lazy-img" 和 onload 动画。
+                                 防止手机端因为缓存拦截导致透明度永远为 0 的“黑屏” Bug -->
+                            <img src="${item.img}" onerror="this.src='${item.fallbackImg}'" onclick="openLightbox(this.src)" alt="${item.title}">
                         </div>
                         <div class="exp-card-overlay"></div>
                         
